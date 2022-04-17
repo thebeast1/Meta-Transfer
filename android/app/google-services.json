@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "532084151978",
+    "project_id": "meta-transfer",
+    "storage_bucket": "meta-transfer.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:532084151978:android:2fdce802fc999254cfe2d3",
+        "android_client_info": {
+          "package_name": "com.invinciblem.meta_transfer"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "532084151978-cmhk16934jkiflt1b7s8nl0np8s631e4.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDL2PrHIHH2JypvaBWRbjIFOH7c_rSmKcg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "532084151978-cmhk16934jkiflt1b7s8nl0np8s631e4.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
