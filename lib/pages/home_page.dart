@@ -109,7 +109,8 @@ class _HomeScreenState extends State<HomeScreen> {
                     return Container();
 
                   DocumentSnapshot documentSnapshot;
-                  if (snapshot.data.docs.toString().length > 2) {
+                  if (snapshot.data.docs.toString().length > 2) //
+                  {
                     documentSnapshot = snapshot.data.docs[0];
                     DBHandler.currentUser.cardNum = documentSnapshot['cardNum'];
                     DBHandler.currentUser.balance = documentSnapshot['balance'];
@@ -118,7 +119,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     DBHandler.currentUser.cardNum = "××××××××××××××××";
                     DBHandler.currentUser.balance = 0.0;
                     DBHandler.currentUser.name = "unknown";
-                  }
+                  } //
                   String cardNum = DBHandler.currentUser.cardNum;
                   return Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -151,21 +152,15 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                       Container(
                         padding: EdgeInsets.only(bottom: 4),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              cardNum.substring(0, 4) +
-                                  "\t\t\t" +
-                                  cardNum.substring(4, 8) +
-                                  "\t\t\t" +
-                                  cardNum.substring(8, 12) +
-                                  "\t\t\t" +
-                                  cardNum.substring(12),
-                              style:
-                                  TextStyle(color: Colors.white, fontSize: 12),
-                            ),
-                          ],
+                        child: Text(
+                          cardNum.substring(0, 4) +
+                              "\t\t\t" +
+                              cardNum.substring(4, 8) +
+                              "\t\t\t" +
+                              cardNum.substring(8, 12) +
+                              "\t\t\t" +
+                              cardNum.substring(12),
+                          style: TextStyle(color: Colors.white, fontSize: 12),
                         ),
                       ),
                       Text(
@@ -185,8 +180,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 children: [
                   IconItem(Icons.transit_enterexit, 'Send', 0, _sendMoney),
                   IconItem(Icons.transit_enterexit, 'Receive', 1, _receive),
-                  IconItem(Icons.wysiwyg, 'Withdraw', 0, _withdrawMoney),
-                  IconItem(Icons.receipt, 'Bills', 0, () {
+                  IconItem(Icons.wysiwyg, 'Withdraw', 1, _withdrawMoney),
+                  IconItem(Icons.receipt, 'Bills', 1, () {
                     Navigator.push(
                         context,
                         MaterialPageRoute(
@@ -230,25 +225,32 @@ class _HomeScreenState extends State<HomeScreen> {
           stream: _history.orderBy("time", descending: false).snapshots(),
           builder: (context, AsyncSnapshot<QuerySnapshot> streamSnapshot) {
             if (streamSnapshot.connectionState == ConnectionState.waiting)
-              return Container();
+              return Container(
+              );
 
             return ListView.builder(
               itemCount: streamSnapshot.data.docs.length,
               itemBuilder: (context, index) {
                 final DocumentSnapshot documentSnapshot =
                     streamSnapshot.data.docs[index];
+
+
                 var item = HistoryItem(
                     documentSnapshot['time'],
                     documentSnapshot['amount'].toString(),
                     documentSnapshot['sender'],
                     documentSnapshot['receiver']);
+
+
                 if (!(item.sender == DBHandler.currentUser.email ||
                     item.receiver == DBHandler.currentUser.email))
                   return Container();
+
                 return listItem(
                   Icons.transit_enterexit,
                   item,
                 );
+
               },
             );
           },
@@ -323,7 +325,7 @@ class _HomeScreenState extends State<HomeScreen> {
               height: 250,
               width: 230,
               child: QrImage(
-                foregroundColor: Colors.black,
+                foregroundColor: Colors.amber,
                 data: DBHandler.currentUser.email,
                 version: QrVersions.auto,
                 size: 200.0,
@@ -395,10 +397,13 @@ class _HomeScreenState extends State<HomeScreen> {
                       'balance': DBHandler.currentUser.balance - (amount + fee),
                       // discount the transaction form the sender
                     }).then((value) {
+
                       String time = DateFormat.yMMMMEEEEd()
                           .add_Hms()
                           .format(DateTime.now());
+
                       print("!!!!!succeed $time ${DateTime.now()}");
+
                       _history
                           .add({
                             'sender': DBHandler.currentUser.email,
@@ -416,6 +421,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 btnCancelOnPress: () {},
                                 btnOkOnPress: () {},
                               )..show());
+
                     }).catchError((error) => AwesomeDialog(
                           context: context,
                           dialogType: DialogType.ERROR,
@@ -562,7 +568,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 //third update my balance
                                 _users.doc(DBHandler.currentUser.email).update({
                                   'balance': DBHandler.currentUser.balance -
-                                      (amount + fee),
+                                      (amount + amount*.01),
                                   // discount the transaction form the sender
                                 }).then((value) {
                                   //final step make a history of this transaction.
@@ -590,8 +596,8 @@ class _HomeScreenState extends State<HomeScreen> {
                           } else {
                             AwesomeDialog(
                               context: context,
-                              dialogType: DialogType.INFO,
-                              animType: AnimType.BOTTOMSLIDE,
+                              dialogType: DialogType.QUESTION,
+                              animType: AnimType.SCALE,
                               title: 'Info',
                               desc:
                                   "Enter the data correctly or check your balance",
@@ -645,7 +651,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget iconDesign(IconData icon, int rotation) {
     return Container(
-      margin: EdgeInsets.only(bottom: 4, left: 4),
+      margin: EdgeInsets.only(bottom: 4, left: 0),
       height: 40,
       width: 40,
       decoration: BoxDecoration(
@@ -658,14 +664,14 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ],
         color: titleBlueColorBG2,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(20),
       ),
       child: Transform.rotate(
         angle: rotation == 0 ? 3 : 0,
         child: Icon(
           icon,
           color: Colors.black,
-          size: 16,
+          size: 20,
         ),
       ),
     );

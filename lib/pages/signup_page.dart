@@ -4,6 +4,7 @@ import 'package:meta_transfer/components/login_button.dart';
 import 'package:meta_transfer/constants/my_colors.dart';
 import 'package:meta_transfer/pages/home_page.dart';
 import 'package:meta_transfer/db_handler.dart';
+import 'package:meta_transfer/pages/startup_page.dart';
 
 class Register extends StatefulWidget {
   @override
@@ -11,7 +12,7 @@ class Register extends StatefulWidget {
 }
 
 class _RegisterState extends State<Register> {
-  String email = "", password = "";
+  String email = "", password = "", ID = "", phone = "";
 
   @override
   Widget build(BuildContext context) {
@@ -35,22 +36,24 @@ class _RegisterState extends State<Register> {
                 CustomInput(
                   inputType: TextInputType.emailAddress,
                   hintText: "type your email",
-                  onChange: (str) {
-                    email = str;
-                  },
-                ),
-                /*CustomInput(
-                  hintText: "type your username",
-                  onChange: (str) {
-
+                  onChange: (text) {
+                    email = text;
                   },
                 ),
                 CustomInput(
-                  inputType: TextInputType.phone,
-                  hintText: "type your phone",
-                  onChange: (str) {},
+                  inputType: TextInputType.number,
+                  hintText: "type your ID",
+                  onChange: (text) {
+                    ID = text;
+                  },
                 ),
-                */
+                CustomInput(
+                  inputType: TextInputType.number,
+                  hintText: "type your Phone",
+                  onChange: (text) {
+                    phone = text;
+                  },
+                ),
                 CustomInput(
                   hintText: "type your Password",
                   onChange: (str) {
@@ -61,6 +64,7 @@ class _RegisterState extends State<Register> {
                 Builder(
                   builder: (context) => LoginButton(
                     title: "SignUp",
+                    backgroundColor: Colors.blue,
                     TextColor: Colors.white,
                     onPressed: () async {
                       String result = await DBHandler.signUp(email, password);
@@ -69,10 +73,8 @@ class _RegisterState extends State<Register> {
                             context,
                             MaterialPageRoute(
                                 builder: (BuildContext context) =>
-                                    HomeScreen()));
+                                    StartUpPage()));
                       } else {
-                        print("@@@@@@@@@@@@@@@@@@@@");
-
                         final snackBar = SnackBar(
                           content: Text(result),
                           action: SnackBarAction(
@@ -87,7 +89,6 @@ class _RegisterState extends State<Register> {
                         Scaffold.of(context).showSnackBar(snackBar);
                       }
                     },
-                    backgroundColor: Colors.blue,
                   ),
                 ),
                 TextButton(

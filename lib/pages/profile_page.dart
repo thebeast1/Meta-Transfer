@@ -51,7 +51,7 @@ class _ProfileState extends State<Profile> {
       backgroundColor: blackColorBG,
       body: SafeArea(
         child: CustomPaint(
-          painter: ShapePainter(),
+            painter: ShapePainter(),
           child: Container(
             height: double.infinity,
             width: double.infinity,

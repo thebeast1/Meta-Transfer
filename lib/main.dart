@@ -36,6 +36,7 @@ class MyApp extends StatelessWidget {
             return Login();
           }
 
+
           // Otherwise, show something whilst waiting for initialization to complete
           return Scaffold(
             body: Center(

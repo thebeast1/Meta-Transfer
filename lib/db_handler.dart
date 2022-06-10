@@ -9,8 +9,10 @@ class DBHandler {
     try {
       UserCredential userCredential = await FirebaseAuth.instance
           .signInWithEmailAndPassword(email: email, password: password);
+
       currentUser = new UserData();
       currentUser.email = email;
+
       FirebaseFirestore.instance
           .collection("users")
           .where("email", isEqualTo: email)

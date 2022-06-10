@@ -15,10 +15,15 @@ class BillsPage extends StatefulWidget {
 }
 
 class _BillsPageState extends State<BillsPage> {
+
   List<Bill> _bills = [
     Bill(billName1, 105.5, Icons.electrical_services_sharp),
     Bill(billName2, 50.5, Icons.opacity_outlined),
     Bill(billName3, 50.5, Icons.wifi),
+    Bill(billName4, 1000, Icons.car_rental),
+    Bill(billName5, 50, Icons.bubble_chart_outlined),
+    Bill(billName6, 100.5, Icons.cast_for_education),
+    Bill(billName7, 5.5, Icons.emoji_transportation_outlined),
   ];
 
   final CollectionReference _users =
@@ -41,6 +46,7 @@ class _BillsPageState extends State<BillsPage> {
         // discount the transaction form the sender
       }).then((value) {
         String time = DateFormat.yMMMMEEEEd().add_Hms().format(DateTime.now());
+
         print("!!!!!succeed $time");
         _history.add({
           'sender': DBHandler.currentUser.email,
