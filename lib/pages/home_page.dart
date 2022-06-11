@@ -31,11 +31,19 @@ class _HomeScreenState extends State<HomeScreen> {
       FirebaseFirestore.instance.collection('users');
 
   final double fee = 1.00;
+  String imageUrl = "";
 
   @override
   void dispose() {
     controller.dispose();
     super.dispose();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    imageUrl = DBHandler.currentUser.ImageUrl;
+    print("#####" + imageUrl);
   }
 
   @override
@@ -58,18 +66,28 @@ class _HomeScreenState extends State<HomeScreen> {
                   TitleName(),
                   InkWell(
                     onTap: () {
+                      print("@@@@@@@@@@" + DBHandler.currentUser.ImageUrl);
                       Navigator.push(
                           context,
                           MaterialPageRoute(
                               builder: (BuildContext context) => Profile()));
                     },
                     child: Container(
-                      padding: EdgeInsets.all(8),
+                      width: 50,
+                      height: 50,
                       decoration: BoxDecoration(
                         color: Color(0xffc7c7c7),
                         borderRadius: BorderRadius.circular(14),
                       ),
-                      child: Icon(Icons.person),
+                      child: DBHandler.currentUser.ImageUrl.isEmpty
+                          ? Icon(Icons.person)
+                          : ClipRRect(
+                              borderRadius: BorderRadius.circular(14),
+                              child: Image.network(
+                                DBHandler.currentUser.ImageUrl,
+                                fit: BoxFit.cover,
+                              ),
+                            ),
                     ),
                   ),
                 ],
@@ -115,6 +133,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     DBHandler.currentUser.cardNum = documentSnapshot['cardNum'];
                     DBHandler.currentUser.balance = documentSnapshot['balance'];
                     DBHandler.currentUser.name = documentSnapshot['name'];
+                    DBHandler.currentUser.name = documentSnapshot['profilePic'];
                   } else {
                     DBHandler.currentUser.cardNum = "××××××××××××××××";
                     DBHandler.currentUser.balance = 0.0;
@@ -225,8 +244,7 @@ class _HomeScreenState extends State<HomeScreen> {
           stream: _history.orderBy("time", descending: false).snapshots(),
           builder: (context, AsyncSnapshot<QuerySnapshot> streamSnapshot) {
             if (streamSnapshot.connectionState == ConnectionState.waiting)
-              return Container(
-              );
+              return Container();
 
             return ListView.builder(
               itemCount: streamSnapshot.data.docs.length,
@@ -234,13 +252,11 @@ class _HomeScreenState extends State<HomeScreen> {
                 final DocumentSnapshot documentSnapshot =
                     streamSnapshot.data.docs[index];
 
-
                 var item = HistoryItem(
                     documentSnapshot['time'],
                     documentSnapshot['amount'].toString(),
                     documentSnapshot['sender'],
                     documentSnapshot['receiver']);
-
 
                 if (!(item.sender == DBHandler.currentUser.email ||
                     item.receiver == DBHandler.currentUser.email))
@@ -250,7 +266,6 @@ class _HomeScreenState extends State<HomeScreen> {
                   Icons.transit_enterexit,
                   item,
                 );
-
               },
             );
           },
@@ -397,7 +412,6 @@ class _HomeScreenState extends State<HomeScreen> {
                       'balance': DBHandler.currentUser.balance - (amount + fee),
                       // discount the transaction form the sender
                     }).then((value) {
-
                       String time = DateFormat.yMMMMEEEEd()
                           .add_Hms()
                           .format(DateTime.now());
@@ -421,7 +435,6 @@ class _HomeScreenState extends State<HomeScreen> {
                                 btnCancelOnPress: () {},
                                 btnOkOnPress: () {},
                               )..show());
-
                     }).catchError((error) => AwesomeDialog(
                           context: context,
                           dialogType: DialogType.ERROR,
@@ -568,7 +581,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 //third update my balance
                                 _users.doc(DBHandler.currentUser.email).update({
                                   'balance': DBHandler.currentUser.balance -
-                                      (amount + amount*.01),
+                                      (amount + amount * .01),
                                   // discount the transaction form the sender
                                 }).then((value) {
                                   //final step make a history of this transaction.

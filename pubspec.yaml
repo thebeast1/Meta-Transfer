@@ -35,6 +35,9 @@ dependencies:
   qr_flutter:
   qr_code_scanner:
   awesome_dialog:
+  image_picker:
+  firebase_storage:
+  permission_handler:
 
 dev_dependencies:
   flutter_test:
