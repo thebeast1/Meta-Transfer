@@ -1,10 +1,16 @@
+import 'dart:io';
+
+import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:meta_transfer/components/custom_input.dart';
 import 'package:meta_transfer/components/shape_painter.dart';
 import 'package:meta_transfer/constants/my_colors.dart';
 import 'package:meta_transfer/db_handler.dart';
 import 'package:meta_transfer/pages/login_page.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class Profile extends StatefulWidget {
   @override
@@ -12,14 +18,10 @@ class Profile extends StatefulWidget {
 }
 
 class _ProfileState extends State<Profile> {
-  @override
-  void dispose() {
-    super.dispose();
-  }
-
   String name, cardNum;
   double balance;
   CollectionReference _users = FirebaseFirestore.instance.collection('users');
+  String imageUrl = "";
 
   Future<void> addUser() async {
     // Call the user's CollectionReference to add a new user Or update the user data.
@@ -32,7 +34,8 @@ class _ProfileState extends State<Profile> {
         'name': name,
         'cardNum': cardNum,
         'balance': balance,
-        'points': 0
+        'points': DBHandler.currentUser.points,
+        'profilePic': imageUrl
       });
   }
 
@@ -42,6 +45,40 @@ class _ProfileState extends State<Profile> {
     name = DBHandler.currentUser.name;
     cardNum = DBHandler.currentUser.cardNum;
     balance = DBHandler.currentUser.balance;
+    imageUrl = DBHandler.currentUser.ImageUrl;
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    didChangeDependencies();
+  }
+
+  uploadImage(File image) async {
+    final _firebaseStorage = FirebaseStorage.instance;
+
+    //Check Permissions
+    await Permission.photos.request();
+    var permissionStatus = await Permission.photos.status;
+
+    if (permissionStatus.isGranted) {
+      //Select Image
+      if (image != null) {
+        //Upload to Firebase
+        var snapshot = await _firebaseStorage
+            .ref()
+            .child('profile_pics/${DBHandler.currentUser.email}')
+            .putFile(image);
+        var downloadUrl = await snapshot.ref.getDownloadURL();
+        setState(() {
+          imageUrl = downloadUrl;
+        });
+      } else {
+        print('No Image Path Received');
+      }
+    } else {
+      print('Permission not granted. Try Again with permission access');
+    }
   }
 
   @override
@@ -51,7 +88,7 @@ class _ProfileState extends State<Profile> {
       backgroundColor: blackColorBG,
       body: SafeArea(
         child: CustomPaint(
-            painter: ShapePainter(),
+          painter: ShapePainter(),
           child: Container(
             height: double.infinity,
             width: double.infinity,
@@ -98,24 +135,69 @@ class _ProfileState extends State<Profile> {
                       )
                     ],
                   ),
-                  Container(
-                    margin: EdgeInsets.only(
-                        top: MediaQuery.of(context).size.height * .14),
-                    padding: EdgeInsets.symmetric(horizontal: 34, vertical: 28),
-                    child: Text(
-                      DBHandler.currentUser.email[0].toUpperCase(),
-                      style: TextStyle(color: Colors.white, fontSize: 22),
-                    ),
-                    decoration: BoxDecoration(
-                      boxShadow: [
-                        BoxShadow(
-                            color: blueColorBG2,
-                            offset: Offset(2, 3),
-                            spreadRadius: 1,
-                            blurRadius: 5)
-                      ],
-                      color: buttonNextColorBG1,
-                      borderRadius: BorderRadius.circular(22),
+                  GestureDetector(
+                    onTap: () {
+                      AwesomeDialog(
+                        context: context,
+                        dialogType: DialogType.QUESTION,
+                        title: "Choose Image Source:",
+                        animType: AnimType.BOTTOMSLIDE,
+                        desc: "",
+                        btnOk: IconButton(
+                          icon: Icon(Icons.image),
+                          onPressed: () async {
+                            File image = await ImagePicker.pickImage(
+                                source: ImageSource.gallery);
+                            Navigator.pop(context);
+                            await uploadImage(image);
+                            print("!!!!! image Path:$imageUrl");
+                            setState(() {});
+                          },
+                        ),
+                        btnCancel: IconButton(
+                          icon: Icon(Icons.camera),
+                          onPressed: () async {
+                            File image = await ImagePicker.pickImage(
+                                source: ImageSource.camera);
+                            await uploadImage(image);
+                            print("!!!!! image Path:$imageUrl");
+                            setState(() {});
+                            Navigator.pop(context);
+                          },
+                        ),
+                      )..show();
+                    },
+                    child: Container(
+                      margin: EdgeInsets.only(
+                          top: MediaQuery.of(context).size.height * .14),
+                      height: 100,
+                      width: 100,
+                      child: imageUrl.isEmpty
+                          ? Center(
+                              child: Text(
+                                DBHandler.currentUser.email[0].toUpperCase(),
+                                style: TextStyle(
+                                    color: Colors.white, fontSize: 50),
+                              ),
+                            )
+                          : ClipRRect(
+                              borderRadius: BorderRadius.circular(22),
+                              child: Image.network(
+                                imageUrl,
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                      decoration: BoxDecoration(
+                        boxShadow: [
+                          BoxShadow(
+                              color: blueColorBG2,
+                              offset: Offset(2, 3),
+                              spreadRadius: 1,
+                              blurRadius: 5)
+                        ],
+                        color: buttonNextColorBG1,
+                        borderRadius: BorderRadius.circular(22),
+                      ),
                     ),
                   ),
                   Container(
