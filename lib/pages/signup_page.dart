@@ -44,14 +44,18 @@ class _RegisterState extends State<Register> {
                   inputType: TextInputType.number,
                   hintText: "type your ID",
                   onChange: (text) {
-                    ID = text;
+                    setState(() {
+                      ID = text;
+                    });
                   },
                 ),
                 CustomInput(
                   inputType: TextInputType.number,
                   hintText: "type your Phone",
                   onChange: (text) {
-                    phone = text;
+                    setState(() {
+                      phone = text;
+                    });
                   },
                 ),
                 CustomInput(
@@ -66,29 +70,32 @@ class _RegisterState extends State<Register> {
                     title: "SignUp",
                     backgroundColor: Colors.blue,
                     TextColor: Colors.white,
-                    onPressed: () async {
-                      String result = await DBHandler.signUp(email, password);
-                      if (result.isEmpty) {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (BuildContext context) =>
-                                    StartUpPage()));
-                      } else {
-                        final snackBar = SnackBar(
-                          content: Text(result),
-                          action: SnackBarAction(
-                            label: 'OK',
-                            onPressed: () {
-                              // Some code to undo the change.
-                            },
-                          ),
-                        );
-                        // Find the ScaffoldMessenger in the widget tree
-                        // and use it to show a SnackBar.
-                        Scaffold.of(context).showSnackBar(snackBar);
-                      }
-                    },
+                    onPressed: ID.length == 14 && phone.length == 11
+                        ? () async {
+                            String result =
+                                await DBHandler.signUp(email, password);
+                            if (result.isEmpty) {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (BuildContext context) =>
+                                          StartUpPage()));
+                            } else {
+                              final snackBar = SnackBar(
+                                content: Text(result),
+                                action: SnackBarAction(
+                                  label: 'OK',
+                                  onPressed: () {
+                                    // Some code to undo the change.
+                                  },
+                                ),
+                              );
+                              // Find the ScaffoldMessenger in the widget tree
+                              // and use it to show a SnackBar.
+                              Scaffold.of(context).showSnackBar(snackBar);
+                            }
+                          }
+                        : null,
                   ),
                 ),
                 TextButton(
