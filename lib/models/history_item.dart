@@ -1,7 +1,7 @@
 import 'package:meta_transfer/db_handler.dart';
 
 class HistoryItem {
-  String _name, time;
+  String _name, time, imageUrl = "";
   int type; // from = 0, to = 1.
   String _amount, sender, receiver;
 
@@ -9,7 +9,12 @@ class HistoryItem {
 
   String get amount => _amount;
 
-  HistoryItem(String time, String amount, String sender, String receiver) {
+  HistoryItem(
+      {String time,
+      String amount,
+      String sender,
+      String receiver,
+      this.imageUrl = ""}) {
     sender == DBHandler.currentUser.email ? type = 0 : type = 1;
 
     _name = type == 0 ? "To " + receiver : "From " + sender;

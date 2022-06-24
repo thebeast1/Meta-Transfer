@@ -39,11 +39,8 @@ class _HomeScreenState extends State<HomeScreen> {
     super.dispose();
   }
 
-  @override
-  void initState() {
-    super.initState();
-    imageUrl = DBHandler.currentUser.ImageUrl;
-    print("#####" + imageUrl);
+  setImageValue() {
+    imageUrl = DBHandler.currentUser.imageUrl;
   }
 
   @override
@@ -66,7 +63,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   TitleName(),
                   InkWell(
                     onTap: () {
-                      print("@@@@@@@@@@" + DBHandler.currentUser.ImageUrl);
+                      print("@@@@@@@@@@" + DBHandler.currentUser.imageUrl);
                       Navigator.push(
                           context,
                           MaterialPageRoute(
@@ -79,15 +76,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         color: Color(0xffc7c7c7),
                         borderRadius: BorderRadius.circular(14),
                       ),
-                      child: DBHandler.currentUser.ImageUrl.isEmpty
-                          ? Icon(Icons.person)
-                          : ClipRRect(
-                              borderRadius: BorderRadius.circular(14),
-                              child: Image.network(
-                                DBHandler.currentUser.ImageUrl,
-                                fit: BoxFit.cover,
-                              ),
-                            ),
+                      child: Icon(Icons.person),
                     ),
                   ),
                 ],
@@ -133,7 +122,10 @@ class _HomeScreenState extends State<HomeScreen> {
                     DBHandler.currentUser.cardNum = documentSnapshot['cardNum'];
                     DBHandler.currentUser.balance = documentSnapshot['balance'];
                     DBHandler.currentUser.name = documentSnapshot['name'];
-                    DBHandler.currentUser.name = documentSnapshot['profilePic'];
+                    DBHandler.currentUser.imageUrl =
+                        documentSnapshot['profilePic'];
+                    print(DBHandler.currentUser.imageUrl);
+                    setImageValue();
                   } else {
                     DBHandler.currentUser.cardNum = "××××××××××××××××";
                     DBHandler.currentUser.balance = 0.0;
@@ -253,10 +245,11 @@ class _HomeScreenState extends State<HomeScreen> {
                     streamSnapshot.data.docs[index];
 
                 var item = HistoryItem(
-                    documentSnapshot['time'],
-                    documentSnapshot['amount'].toString(),
-                    documentSnapshot['sender'],
-                    documentSnapshot['receiver']);
+                  time: documentSnapshot['time'],
+                  amount: documentSnapshot['amount'].toString(),
+                  sender: documentSnapshot['sender'],
+                  receiver: documentSnapshot['receiver'],
+                );
 
                 if (!(item.sender == DBHandler.currentUser.email ||
                     item.receiver == DBHandler.currentUser.email))

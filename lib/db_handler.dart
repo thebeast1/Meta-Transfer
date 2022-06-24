@@ -23,7 +23,7 @@ class DBHandler {
           currentUser.balance = result.get('balance');
           currentUser.name = result.get('name');
           currentUser.points = result.get('points');
-          currentUser.ImageUrl= result.get('profilePic');
+          currentUser.imageUrl= result.get('profilePic');
           print("!!!!!!@@@" + currentUser.balance.toString());
         });
       });

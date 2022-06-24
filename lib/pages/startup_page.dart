@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lottie/lottie.dart';
 import 'package:meta_transfer/pages/home_page.dart';
 
 class StartUpPage extends StatefulWidget {
@@ -32,29 +33,19 @@ class _StartUpPageState extends State<StartUpPage> {
                   controller: _pageController,
                   children: [
                     onBoardPage(
-                      "sport",
-                      "Choose Sport Clothes",
-                      "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text",
+                      "transfer",
+                      "Transfer",
+                      "With one click you can transfer your money.",
                     ),
                     onBoardPage(
-                      "bags",
-                      "Choose Bags",
-                      "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text",
+                      "pay",
+                      "Payment",
+                      "We come with fast and convenient noon-cash payments.",
                     ),
                     onBoardPage(
                       "delivery",
-                      "Get Best shipping Service",
-                      "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text",
-                    ),
-                    onBoardPage(
-                      "destination",
-                      "Get on Time Delivery Anywhere",
-                      "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text",
-                    ),
-                    onBoardPage(
-                      "payment",
-                      "Choose Your Payment Method",
-                      "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text",
+                      "delivery",
+                      "get your money at your door step.",
                     ),
                   ],
                   onPageChanged: (value) => {setCurrentPage(value)},
@@ -62,7 +53,7 @@ class _StartUpPageState extends State<StartUpPage> {
               ),
               Row(
                   mainAxisAlignment: MainAxisAlignment.center,
-                  children: List.generate(5, (index) => getIndicator(index))),
+                  children: List.generate(3, (index) => getIndicator(index))),
             ],
           ),
           Positioned(
@@ -117,11 +108,11 @@ class _StartUpPageState extends State<StartUpPage> {
           height: 400,
           width: MediaQuery.of(context).size.width,
           padding: EdgeInsets.all(50),
-          /* child:
-          SvgPicture.asset(
-            "assets/svg/$img.svg",
+           child:
+          Lottie.asset(
+            "assets/$img.json",
             // By default our  icon color is white
-          ),*/
+          ),
         ),
         Container(
           padding: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
@@ -148,7 +139,7 @@ class _StartUpPageState extends State<StartUpPage> {
 
   void changePage() {
     print(currentPage);
-    if (currentPage == 4) {
+    if (currentPage == 2) {
       Navigator.push(
           context, MaterialPageRoute(builder: (context) => HomeScreen()));
     } else {

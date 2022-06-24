@@ -28,7 +28,8 @@ class _ProfileState extends State<Profile> {
     if (cardNum.length == 16 &&
         balance <= 1000000 &&
         balance >= 0 &&
-        name.isNotEmpty)
+        name.isNotEmpty) {
+      loadingIndicator(1);
       await _users.doc(DBHandler.currentUser.email).set({
         'email': DBHandler.currentUser.email,
         'name': name,
@@ -37,6 +38,21 @@ class _ProfileState extends State<Profile> {
         'points': DBHandler.currentUser.points,
         'profilePic': imageUrl
       });
+      loadingIndicator(2);
+    }
+  }
+
+  loadingIndicator(int isLoading) {
+    if (isLoading == 1)
+      return showDialog(
+        context: context,
+        builder: (context) => Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
+    else if (isLoading == 2) {
+      Navigator.pop(context);
+    }
   }
 
   @override
@@ -45,7 +61,7 @@ class _ProfileState extends State<Profile> {
     name = DBHandler.currentUser.name;
     cardNum = DBHandler.currentUser.cardNum;
     balance = DBHandler.currentUser.balance;
-    imageUrl = DBHandler.currentUser.ImageUrl;
+    imageUrl = DBHandler.currentUser.imageUrl;
   }
 
   @override
@@ -149,9 +165,11 @@ class _ProfileState extends State<Profile> {
                             File image = await ImagePicker.pickImage(
                                 source: ImageSource.gallery);
                             Navigator.pop(context);
+                            loadingIndicator(1);
                             await uploadImage(image);
                             print("!!!!! image Path:$imageUrl");
                             setState(() {});
+                            loadingIndicator(2);
                           },
                         ),
                         btnCancel: IconButton(
@@ -159,10 +177,12 @@ class _ProfileState extends State<Profile> {
                           onPressed: () async {
                             File image = await ImagePicker.pickImage(
                                 source: ImageSource.camera);
+                            Navigator.pop(context);
+                            loadingIndicator(1);
                             await uploadImage(image);
                             print("!!!!! image Path:$imageUrl");
                             setState(() {});
-                            Navigator.pop(context);
+                            loadingIndicator(2);
                           },
                         ),
                       )..show();
