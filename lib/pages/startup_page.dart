@@ -40,7 +40,7 @@ class _StartUpPageState extends State<StartUpPage> {
                     onBoardPage(
                       "pay",
                       "Payment",
-                      "We come with fast and convenient noon-cash payments.",
+                      "We come with fast and convenient non-cash payments.",
                     ),
                     onBoardPage(
                       "delivery",

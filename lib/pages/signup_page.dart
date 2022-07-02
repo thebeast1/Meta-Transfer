@@ -95,7 +95,29 @@ class _RegisterState extends State<Register> {
                               Scaffold.of(context).showSnackBar(snackBar);
                             }
                           }
-                        : null,
+                        : () {
+                            String result;
+                            if (phone.length != 11 && ID.length != 14)
+                              result =
+                                  "Check the National Id is 14 digits and phone number is 11 digits.";
+                            else if (ID.length != 14) {
+                              result = "Check the National Id is 14 digits.";
+                            } else if (phone.length != 11)
+                              result = "Check the Phone number is 11 digits.";
+
+                            final snackBar = SnackBar(
+                              content: Text(result),
+                              action: SnackBarAction(
+                                label: 'OK',
+                                onPressed: () {
+                                  // Some code to undo the change.
+                                },
+                              ),
+                            );
+                            // Find the ScaffoldMessenger in the widget tree
+                            // and use it to show a SnackBar.
+                            Scaffold.of(context).showSnackBar(snackBar);
+                          },
                   ),
                 ),
                 TextButton(

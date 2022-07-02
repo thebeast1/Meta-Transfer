@@ -25,21 +25,17 @@ class _ProfileState extends State<Profile> {
 
   Future<void> addUser() async {
     // Call the user's CollectionReference to add a new user Or update the user data.
-    if (cardNum.length == 16 &&
-        balance <= 1000000 &&
-        balance >= 0 &&
-        name.isNotEmpty) {
-      loadingIndicator(1);
-      await _users.doc(DBHandler.currentUser.email).set({
-        'email': DBHandler.currentUser.email,
-        'name': name,
-        'cardNum': cardNum,
-        'balance': balance,
-        'points': DBHandler.currentUser.points,
-        'profilePic': imageUrl
-      });
-      loadingIndicator(2);
-    }
+
+    loadingIndicator(1);
+    await _users.doc(DBHandler.currentUser.email).set({
+      'email': DBHandler.currentUser.email,
+      'name': name,
+      'cardNum': cardNum,
+      'balance': balance,
+      'points': DBHandler.currentUser.points,
+      'profilePic': imageUrl
+    });
+    loadingIndicator(2);
   }
 
   loadingIndicator(int isLoading) {
@@ -97,11 +93,14 @@ class _ProfileState extends State<Profile> {
     }
   }
 
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: true,
       backgroundColor: blackColorBG,
+      key: _scaffoldKey,
       body: SafeArea(
         child: CustomPaint(
           painter: ShapePainter(),
@@ -268,7 +267,29 @@ class _ProfileState extends State<Profile> {
                   ),
                   InkWell(
                     borderRadius: BorderRadius.circular(22),
-                    onTap: addUser,
+                    onTap: () {
+                      if (cardNum.length == 16 &&
+                          balance <= 1000000 &&
+                          balance >= 0 &&
+                          name.isNotEmpty)
+                        addUser();
+                      else {
+                        String result = "the balance must be less than 1000000";
+                        if (cardNum.length != 16 && name.length == 0)
+                          result = "fill the data correctly";
+                        else if (cardNum.length != 16)
+                          result = "Your card number must be 16 number";
+                        else if (name.length == 0)
+                          result = "please enter Your name";
+
+                        final snackBar = SnackBar(
+                          content: Text("$result"),
+                        );
+                        // Find the ScaffoldMessenger in the widget tree
+                        // and use it to show a SnackBar.
+                        _scaffoldKey.currentState.showSnackBar(snackBar);
+                      }
+                    },
                     child: Container(
                       child: Center(
                         child: Text(
